@@ -6,7 +6,16 @@ import { SelectorPageComponent } from './pages/selector-page/selector-page.compo
 const routes: Routes = [
   {
     path: '',
-    component: SelectorPageComponent,
+    children: [
+      {
+        path: 'selector',
+        component: SelectorPageComponent,
+      },
+      {
+        path: '**',
+        redirectTo: 'selector',
+      },
+    ],
   },
 ];
 
@@ -14,4 +23,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SelectorRoutingModule {}
+export class CountriesRoutingModule {}
