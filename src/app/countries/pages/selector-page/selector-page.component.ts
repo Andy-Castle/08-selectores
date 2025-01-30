@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CountriesService } from '../../services/countries.service';
 import { Region, SmallCountry } from '../../interfaces/country.interfaces';
-import { switchMap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-selector-page',
@@ -37,6 +37,7 @@ export class SelectorPageComponent implements OnInit {
       .get('region')! // Obtiene el control 'region' del formulario
       .valueChanges // Detecta cambios en el valor del control
       .pipe(
+        tap(() => this.myForm.get('country')!.setValue('')),
         // Usa switchMap para cancelar peticiones anteriores si el usuario cambia la región rápidamente
         switchMap((region) =>
           this.countriesService.getCountriesByRegion(region)
