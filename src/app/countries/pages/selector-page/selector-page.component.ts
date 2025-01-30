@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CountriesService } from '../../services/countries.service';
-import { Region } from '../../interfaces/country.interfaces';
+import { Region, SmallCountry } from '../../interfaces/country.interfaces';
 import { switchMap } from 'rxjs';
 
 @Component({
@@ -20,6 +20,8 @@ export class SelectorPageComponent implements OnInit {
     country: ['', Validators.required],
     borders: ['', Validators.required],
   });
+
+  public countriesByRegion: SmallCountry[] = [];
 
   get regions(): Region[] {
     return this.countriesService.regions;
@@ -40,9 +42,10 @@ export class SelectorPageComponent implements OnInit {
           this.countriesService.getCountriesByRegion(region)
         )
       )
-      .subscribe((region) => {
+      .subscribe((countries) => {
         // Cuando llegan los datos de los países, se imprimen en la consola
-        console.log(region);
+        // console.log(region);
+        this.countriesByRegion = countries;
       });
   }
 }

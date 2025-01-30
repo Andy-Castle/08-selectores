@@ -4,7 +4,7 @@ import {
   Region,
   SmallCountry,
 } from '../interfaces/country.interfaces';
-import { Observable, of, tap } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -36,10 +36,17 @@ export class CountriesService {
 
     // Hace la petición HTTP GET y devuelve un Observable con los países
     return this.http
-      .get<SmallCountry[]>(url) // Realiza la petición a la API y espera un array de SmallCountry
+      .get<Country[]>(url) // Realiza la petición a la API y espera un array de SmallCountry
       .pipe(
+        map((countries) =>
+          countries.map((country) => ({
+            name: country.name.common,
+            cca3: country.cca3,
+            borders: country.borders ?? [],
+          }))
+        )
         // `tap` permite ejecutar efectos secundarios, en este caso, imprimir la respuesta en consola
-        tap((response) => console.log({ response }))
+        // tap((response) => console.log({ response }))
       );
   }
 }
