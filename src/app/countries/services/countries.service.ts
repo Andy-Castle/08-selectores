@@ -28,12 +28,18 @@ export class CountriesService {
   }
 
   getCountriesByRegion(region: Region): Observable<SmallCountry[]> {
+    // Si no se proporciona una región, devuelve un Observable con un arreglo vacío
     if (!region) return of([]);
 
+    // Construye la URL de la API para obtener los países de una región específica
     const url: string = `${this.baseUrl}/region/${region}?fields=cca3,name,borders`;
 
+    // Hace la petición HTTP GET y devuelve un Observable con los países
     return this.http
-      .get<SmallCountry[]>(url)
-      .pipe(tap((response) => console.log({ response })));
+      .get<SmallCountry[]>(url) // Realiza la petición a la API y espera un array de SmallCountry
+      .pipe(
+        // `tap` permite ejecutar efectos secundarios, en este caso, imprimir la respuesta en consola
+        tap((response) => console.log({ response }))
+      );
   }
 }

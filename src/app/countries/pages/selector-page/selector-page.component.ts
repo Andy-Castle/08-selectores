@@ -30,14 +30,18 @@ export class SelectorPageComponent implements OnInit {
   }
 
   onRegionChanged(): void {
+    // Escucha los cambios en el control del formulario llamado 'region'
     this.myForm
-      .get('region')!
-      .valueChanges.pipe(
+      .get('region')! // Obtiene el control 'region' del formulario
+      .valueChanges // Detecta cambios en el valor del control
+      .pipe(
+        // Usa switchMap para cancelar peticiones anteriores si el usuario cambia la región rápidamente
         switchMap((region) =>
           this.countriesService.getCountriesByRegion(region)
         )
       )
       .subscribe((region) => {
+        // Cuando llegan los datos de los países, se imprimen en la consola
         console.log(region);
       });
   }
