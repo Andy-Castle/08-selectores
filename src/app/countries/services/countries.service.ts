@@ -4,7 +4,7 @@ import {
   Region,
   SmallCountry,
 } from '../interfaces/country.interfaces';
-import { map, Observable, of, tap } from 'rxjs';
+import { combineLatest, map, Observable, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -62,5 +62,22 @@ export class CountriesService {
         borders: country.borders ?? [],
       }))
     );
+  }
+
+  getCountryBordersByCode(borders: string[]): Observable<SmallCountry[]> {
+    // Si no hay fronteras o la lista está vacía, devuelve un Observable con un arreglo vacío
+    if (!borders || borders.length === 0) return of([]);
+
+    // Arreglo donde se almacenarán las peticiones de cada país frontera
+    const countriesRequest: Observable<SmallCountry>[] = [];
+
+    // Recorremos cada código de país frontera y realizamos una petición para obtener su información
+    borders.forEach((code) => {
+      const request = this.getCountryByAlphaCode(code); // Llamamos a la función que obtiene el país por su código
+      countriesRequest.push(request); // Agregamos la petición al arreglo
+    });
+
+    // Usamos combineLatest para esperar a que todas las peticiones terminen y devolver los resultados en un solo Observable
+    return combineLatest(countriesRequest);
   }
 }

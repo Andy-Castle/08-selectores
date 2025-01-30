@@ -22,7 +22,7 @@ export class SelectorPageComponent implements OnInit {
   });
 
   public countriesByRegion: SmallCountry[] = [];
-  public borders: string[] = [];
+  public borders: SmallCountry[] = [];
 
   get regions(): Region[] {
     return this.countriesService.regions;
@@ -56,17 +56,27 @@ export class SelectorPageComponent implements OnInit {
 
   onCountryChanged(): void {
     this.myForm
-      .get('country')!
+      .get('country')! // Obtenemos el control del formulario que representa el país seleccionado
       .valueChanges.pipe(
-        tap(() => this.myForm.get('border')!.setValue('')),
-        filter((value: string) => value.length > 0),
+        // Cada vez que cambia el país seleccionado...
+
+        tap(() => this.myForm.get('border')!.setValue('')), // Reiniciamos el valor del campo de fronteras
+
+        filter((value: string) => value.length > 0), // Solo continuamos si se ha seleccionado un país
+
         switchMap((alphacode) =>
+          // Buscamos la información del país seleccionado usando su código
           this.countriesService.getCountryByAlphaCode(alphacode)
+        ),
+
+        switchMap((country) =>
+          // Cuando obtenemos el país, buscamos sus países fronterizos
+          this.countriesService.getCountryBordersByCode(country.borders)
         )
       )
-      .subscribe((country) => {
-        // console.log({ borders: country.borders });
-        this.borders = country.borders;
+      .subscribe((countries) => {
+        // Cuando las peticiones finalizan, actualizamos la lista de fronteras
+        this.borders = countries;
       });
   }
 }
